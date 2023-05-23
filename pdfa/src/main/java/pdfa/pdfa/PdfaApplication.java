@@ -28,32 +28,26 @@ public class PdfaApplication {
 			PDDocument document =  PDDocument.load(new File(args[0]));
 			PDDocumentCatalog catalog = document.getDocumentCatalog();
 			PDMetadata metadata = catalog.getMetadata();
-			metadata.getCOSObject().toString();
-			metadata.getFilters();
-			metadata.getMetadata();
-		
-			String string =  new String( metadata.toByteArray(), "ISO-8859-1" );
-		
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document document1 = null;
-			document1 = builder.parse(new InputSource(new StringReader(string)));
-		Element rootElement = document1.getDocumentElement();
-		NodeList itemElements = rootElement.getElementsByTagName("pdfaid:part");
-		if (itemElements != null) {
-			Element itemElement = (Element) itemElements.item(0);
-			NodeList childNodes = itemElement.getChildNodes();
-			itemElement.getNodeValue();
-			System.out.println("Your file is a ===> PDF/A"+childNodes.item(0).getNodeValue());
-		} else {
-			itemElements = rootElement.getElementsByTagName("rdf:Description");
-			for (int indx= 0; indx < itemElements.getLength(); indx++) {
-				Element eElement = (Element) itemElements.item(indx);
-				if (eElement.hasAttribute("pdfaid:part")) {
-					System.out.println("Your file is a ===> PDF/A"+eElement.getAttribute("pdfaid:part"));
-					break;
+			String xmlString =  new String( metadata.toByteArray(), "ISO-8859-1" );
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document1 = builder.parse(new InputSource(new StringReader(xmlString)));
+			Element rootElement = document1.getDocumentElement();
+			NodeList itemElements = rootElement.getElementsByTagName("pdfaid:part");
+			if (itemElements != null) {
+				Element itemElement = (Element) itemElements.item(0);
+				NodeList childNodes = itemElement.getChildNodes();
+				itemElement.getNodeValue();
+				System.out.println("Your file is a ===> PDF/A"+childNodes.item(0).getNodeValue());
+			} else {
+				itemElements = rootElement.getElementsByTagName("rdf:Description");
+				for (int indx= 0; indx < itemElements.getLength(); indx++) {
+					Element eElement = (Element) itemElements.item(indx);
+					if (eElement.hasAttribute("pdfaid:part")) {
+						System.out.println("Your file is a ===> PDF/A"+eElement.getAttribute("pdfaid:part"));
+						break;
+					}
 				}
-		       }
 			}
 		} catch (IOException  | ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
